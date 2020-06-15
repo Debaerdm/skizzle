@@ -1,0 +1,56 @@
+[
+	{
+		"id": 1,
+		"removeable": false,
+		"labels": [
+			{
+				"lang": "fr-FR",
+				"text": "Bleu"
+			},
+			{
+				"lang": "en-US",
+				"text": "Blue"
+			}
+		],
+		"gradient": {
+			"degres": 135,
+			"colors": ["#48c6ef", "#6f86d6"]
+		}
+	},
+	{
+		"id": 2,
+		"removeable": false,
+		"labels": [
+			{
+				"lang": "fr-FR",
+				"text": "Orange"
+			},
+			{
+				"lang": "en-US",
+				"text": "Orange"
+			}
+		],
+		"gradient": {
+			"degres": 135,
+			"colors": ["#fc7864", "#fda366"]
+		}
+	},
+	{
+		"id": 3,
+		"removeable": false,
+		"labels": [
+			{
+				"lang": "fr-FR",
+				"text": "Violet"
+			},
+			{
+				"lang": "en-US",
+				"text": "Purple"
+			}
+		],
+		"gradient": {
+			"degres": 135,
+			"colors": ["#667eea", "#764ba2"]
+		}
+	}
+]

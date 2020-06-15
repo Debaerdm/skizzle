@@ -8,12 +8,20 @@
 	
 	getCurrentWindow().on('maximize', () => isMaximized = true);
 	getCurrentWindow().on('unmaximize', () => isMaximized = false);
+
+	const doubleClickEvent = () => {
+		if (isMaximized) {
+			getCurrentWindow().unmaximize();
+		} else {
+			getCurrentWindow().maximize();
+		}
+	}
 </script>
 
 <style src="./Header.scss"></style>
 
 <header class="titlebar">
-	<div class="drag-region {currentPlatform ? `drag-region--${currentPlatform}` : ''}">
+	<div on:dblclick={doubleClickEvent} class="drag-region {currentPlatform ? `drag-region--${currentPlatform}` : ''}">
 		{#if currentPlatform === 'others'}
 			<MacosBar bind:isMaximized />
 		{:else}
