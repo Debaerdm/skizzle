@@ -7,7 +7,7 @@
 	"homepage": "./",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/AxaGuilDEv/skizzle.git"
+		"url": "https://github.com/Debaerdm/skizzle.git"
 	},
 	"scripts": {
 		"postinstall": "electron-builder install-app-deps",

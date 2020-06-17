@@ -32,7 +32,7 @@ contextMenu({
 unhandled({
 	reportButton: error => {
 		openNewGitHubIssue({
-			repoUrl: 'https://github.com/AxaGuilDEv/skizzle',
+			repoUrl: 'https://github.com/Debaerdm/skizzle',
 			body: `\`\`\`\n${error.stack}\n\`\`\`\n\n---\n\n${debugInfo()}`,
 		});
 	},
