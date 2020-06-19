@@ -18,10 +18,11 @@ const setAppUserModelId = () => {
 
 const sendStatusToWindow = text => {
 	logger.info(text);
+	console.log(text);
 };
 
 setAppUserModelId();
-debug();
+//debug();
 autoUpdater.logger = logger;
 
 contextMenu({
@@ -59,6 +60,7 @@ let proxyPassword = null;
 let window;
 let authWindow;
 let logoutWindow;
+let splashscreen;
 let tray;
 
 function createWindow() {
@@ -69,6 +71,7 @@ function createWindow() {
 		height: 768,
 		resizable: true,
 		frame: false,
+		show: false,
 		webPreferences: {
 			nodeIntegration: true,
 			experimentalFeatures: true,
@@ -152,6 +155,25 @@ function createWindow() {
 		if (!window.isVisible()) window.show();
 		window.focus();
 	});
+
+	splashscreen = new BrowserWindow({
+		autoHideMenuBar: true,
+		frame: false,
+		width: 525,
+		height: 265,
+		resizable: false,
+		show: true,
+		skipTaskbar: true,
+		webPreferences: {
+			nodeIntegration: true,
+		},
+	});
+
+	splashscreen.loadURL(`file:///${__dirname}/splashscreen.html`);
+
+	splashscreen.on('closed', () => {
+		splashscreen = null;
+	});
 }
 
 if (app.isPackaged) {
@@ -183,8 +205,8 @@ if (!gotTheLock) {
 
 	app.commandLine.appendSwitch('disable-site-isolation-trials');
 	app.on('ready', () => {
-		updateApp();
 		createWindow();
+		updateApp();
 	});
 
 	app.on('window-all-closed', () => {
@@ -292,22 +314,53 @@ if (!gotTheLock) {
 }
 
 autoUpdater.on('checking-for-update', () => {
-	sendStatusToWindow('Checking for update...');
+	splashscreen.webContents.send('message', {
+		text: 'Recherche de mise à jour...',
+	});
+
+	sendStatusToWindow('Recherche de mise à jour...');
 });
 
 autoUpdater.on('update-available', info => {
+	splashscreen.webContents.send('message', {
+		text: 'Une mise à jour est disponible !',
+	});
+
 	sendStatusToWindow('Update available.');
 });
 
 autoUpdater.on('update-not-available', info => {
+	splashscreen.webContents.send('message', {
+		text: 'Votre application est à jour !',
+	});
+
+	setTimeout(() => {
+		window.show();
+		splashscreen.hide();
+	}, 2000);
+
 	sendStatusToWindow('Update not available.');
 });
 
 autoUpdater.on('error', err => {
+	splashscreen.webContents.send('message', {
+		text: 'Votre application est à jour !',
+	});
+
+	setTimeout(() => {
+		window.show();
+		splashscreen.hide();
+	}, 2000);
+
 	sendStatusToWindow(`Error in auto-updater. ${err}`);
 });
 
 autoUpdater.on('download-progress', progressObj => {
+	splashscreen.webContents.send('message', {
+		text: 'Téléchargement en cours...',
+		data: { ...progressObj },
+	});
+
 	let log_message = `Download speed: ${progressObj.bytesPerSecond}`;
 	log_message = `${log_message} - Downloaded ${progressObj.percent}%`;
 	log_message = `${log_message} (${progressObj.transferred}/${progressObj.total})`;
@@ -316,11 +369,33 @@ autoUpdater.on('download-progress', progressObj => {
 
 autoUpdater.on('update-downloaded', info => {
 	sendStatusToWindow('Update downloaded');
-	autoUpdater.quitAndInstall();
+
+	splashscreen.webContents.send('message', {
+		event: 'INFO',
+		text: 'Installation de la mise à jour',
+	});
+
+	let seconds = 5;
+
+	setInterval(() => {
+		splashscreen.webContents.send('message', {
+			text: `Redémmarage dans ${seconds} second${seconds > 1}? 's':''`,
+		});
+
+		if (seconds > 0) {
+			seconds = seconds - 1;
+		}
+	}, 1000);
+
+	setTimeout(() => {
+		autoUpdater.quitAndInstall(true, true);
+	}, 5000);
 });
 
 function updateApp() {
 	if (!is.macAppStore) {
-		autoUpdater.checkForUpdatesAndNotify();
+		setTimeout(() => {
+			autoUpdater.checkForUpdates();
+		}, 2000);
 	}
 }
