@@ -2,10 +2,9 @@ const unhandled = require('electron-unhandled');
 const contextMenu = require('electron-context-menu');
 const { openNewGitHubIssue, debugInfo, is } = require('electron-util');
 const debug = require('electron-debug');
-const logger = require('electron-log');
-const { autoUpdater } = require('electron-updater');
 const electron = require('electron');
 const { app, BrowserWindow, Menu, Notification, ipcMain, Tray } = electron;
+const { checkForUpdates } = require('./updater.js');
 
 try {
 	require('electron-reloader')(module);
@@ -16,14 +15,8 @@ const setAppUserModelId = () => {
 	app.setAppUserModelId('skizzle');
 };
 
-const sendStatusToWindow = text => {
-	logger.info(text);
-	console.log(text);
-};
-
 setAppUserModelId();
 debug();
-autoUpdater.logger = logger;
 
 contextMenu({
 	showCopyImage: false,
@@ -206,7 +199,7 @@ if (!gotTheLock) {
 	app.commandLine.appendSwitch('disable-site-isolation-trials');
 	app.on('ready', () => {
 		createWindow();
-		updateApp();
+		checkForUpdates(splashscreen, window);
 	});
 
 	app.on('window-all-closed', () => {
@@ -311,90 +304,4 @@ if (!gotTheLock) {
 
 		logoutWindow.webContents.loadURL(config.logout);
 	});
-}
-
-autoUpdater.on('checking-for-update', () => {
-	splashscreen.webContents.send('message', {
-		text: 'Recherche de mise à jour...',
-	});
-
-	sendStatusToWindow('Recherche de mise à jour...');
-});
-
-autoUpdater.on('update-available', info => {
-	splashscreen.webContents.send('message', {
-		text: 'Une mise à jour est disponible !',
-	});
-
-	sendStatusToWindow('Update available.');
-});
-
-autoUpdater.on('update-not-available', info => {
-	splashscreen.webContents.send('message', {
-		text: 'Votre application est à jour !',
-	});
-
-	setTimeout(() => {
-		window.show();
-		splashscreen.hide();
-	}, 2000);
-
-	sendStatusToWindow('Update not available.');
-});
-
-autoUpdater.on('error', err => {
-	splashscreen.webContents.send('message', {
-		text: 'Votre application est à jour !',
-	});
-
-	setTimeout(() => {
-		window.show();
-		splashscreen.hide();
-	}, 2000);
-
-	sendStatusToWindow(`Error in auto-updater. ${err}`);
-});
-
-autoUpdater.on('download-progress', progressObj => {
-	splashscreen.webContents.send('message', {
-		text: 'Téléchargement en cours...',
-		data: { ...progressObj },
-	});
-
-	let log_message = `Download speed: ${progressObj.bytesPerSecond}`;
-	log_message = `${log_message} - Downloaded ${progressObj.percent}%`;
-	log_message = `${log_message} (${progressObj.transferred}/${progressObj.total})`;
-	sendStatusToWindow(log_message);
-});
-
-autoUpdater.on('update-downloaded', info => {
-	sendStatusToWindow('Update downloaded');
-
-	splashscreen.webContents.send('message', {
-		text: 'Installation de la mise à jour',
-	});
-
-	let seconds = 5;
-
-	setInterval(() => {
-		splashscreen.webContents.send('message', {
-			text: `Redémmarage dans ${seconds} second${seconds > 1}? 's':''`,
-		});
-
-		if (seconds > 0) {
-			seconds = seconds - 1;
-		}
-	}, 1000);
-
-	setTimeout(() => {
-		autoUpdater.quitAndInstall(true, true);
-	}, 5000);
-});
-
-function updateApp() {
-	if (!is.macAppStore) {
-		setTimeout(() => {
-			autoUpdater.checkForUpdates();
-		}, 2000);
-	}
 }
