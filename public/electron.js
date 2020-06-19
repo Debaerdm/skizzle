@@ -371,7 +371,6 @@ autoUpdater.on('update-downloaded', info => {
 	sendStatusToWindow('Update downloaded');
 
 	splashscreen.webContents.send('message', {
-		event: 'INFO',
 		text: 'Installation de la mise à jour',
 	});
 

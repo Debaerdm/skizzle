@@ -44,7 +44,7 @@
 				let width = updateWidth(0);
 
 				ipcRenderer.on('message', (event, args) => {
-					const { event, text, data } = args;
+					const { text, data } = args;
 
 					label.innerHTML = text;
 
