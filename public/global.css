@@ -89,7 +89,6 @@ input:disabled {
 	background-color: #eee;
 	position: relative;
 	height: 2rem;
-	display: none;
 }
 
 .skz-splashscreen__progress--bar {

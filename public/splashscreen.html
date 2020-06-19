@@ -53,10 +53,6 @@
 						download.innerHTML = `Vitesse de téléchargement : ${progressObj.bytesPerSecond} (${progressObj.transferred}/${progressObj.total})`;
 						updateWidth(data.percent);
 					}
-
-					if (width > 0) {
-						div.style.display = 'block';
-					}
 				});
 			}
 
