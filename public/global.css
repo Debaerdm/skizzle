@@ -96,13 +96,6 @@ input:disabled {
 	background-color: #23cc56;
 }
 
-.skz-splashscreen__info {
-	position: absolute;
-	right: 0;
-	left: 0;
-	bottom: 7px;
-}
-
 .skz-splashscreen__label {
 	position: relative;
 	height: 15%;
@@ -146,8 +139,7 @@ button.link:hover {
 		background-color: #333;
 	}
 
-	.skz-splashscreen__label,
-	.skz-splashscreen__info {
+	.skz-splashscreen__label {
 		color: #fff;
 	}
 
