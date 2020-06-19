@@ -22,7 +22,7 @@ const sendStatusToWindow = text => {
 };
 
 setAppUserModelId();
-//debug();
+debug();
 autoUpdater.logger = logger;
 
 contextMenu({
