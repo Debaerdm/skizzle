@@ -60,7 +60,7 @@ autoUpdater.on('update-downloaded', () => {
 
 	setInterval(() => {
 		notifiedWindow.webContents.send('message', {
-			text: `Redémmarage dans ${seconds} second${seconds > 1 ? 's' : ''}`,
+			text: `Redémarrage dans ${seconds} seconde${seconds > 1 ? 's' : ''}`,
 		});
 
 		if (seconds > 0) {
