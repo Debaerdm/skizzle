@@ -49,9 +49,31 @@
 					label.innerHTML = text;
 
 					if (data) {
-						label.innerHTML = label.innerHTML + ` ${data.percent}%`;
-						download.innerHTML = `Vitesse de téléchargement : ${progressObj.bytesPerSecond} (${progressObj.transferred}/${progressObj.total})`;
-						updateWidth(data.percent);
+						const percent = Math.floor(data.percent);
+						label.innerHTML = label.innerHTML + ` ${percent}%`;
+
+						let i = -1;
+						const byteUnits = [
+							' kbps',
+							' Mbps',
+							' Gbps',
+							' Tbps',
+							'Pbps',
+							'Ebps',
+							'Zbps',
+							'Ybps',
+						];
+						let fileSizeInBytes = data.bytesPerSecond;
+						do {
+							fileSizeInBytes = fileSizeInBytes / 1024;
+							i++;
+						} while (fileSizeInBytes > 1024);
+
+						download.innerHTML = `Vitesse de téléchargement : ${Math.max(
+							fileSizeInBytes,
+							0.1,
+						).toFixed(1) + byteUnits[i]} (${data.transferred}/${data.total})`;
+						updateWidth(percent);
 					}
 				});
 			}
